@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
-import { Pyq } from "../models/pyq.model.js";
+import { Pyq } from "../models/Pyq.model.js";
 
 const uploadPyq = asyncHandler(async (req, res) => {
   const { branch, semester, subject, year } = req.body;
