@@ -21,7 +21,7 @@ const Register = () => {
       const response = await registerUser(formData);
       console.log(response);
       alert("Registration Successful!");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error(error);
       alert("Registration Failed!");
