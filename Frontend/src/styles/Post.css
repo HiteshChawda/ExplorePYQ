@@ -1,0 +1,156 @@
+.posts-page{
+    padding:30px;
+}
+
+.posts-layout{
+    max-width:1400px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:30px;
+}
+
+.posts-feed{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.create-post{
+    position:sticky;
+    top:100px;
+    height:fit-content;
+}
+
+.create-post-card{
+    background:#1f2937;
+    padding:25px;
+    border-radius:15px;
+}
+
+.create-post-card h2{
+    margin-bottom:20px;
+}
+
+.create-post-card form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.create-post-card textarea{
+    min-height:180px;
+    resize:none;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+}
+
+.create-post-card button{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+.post-card{
+    background:#1f2937;
+    padding:25px;
+    border-radius:15px;
+}
+
+.post-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.post-header h3{
+    margin:0;
+}
+
+.post-header p{
+    opacity:.7;
+    font-size:.9rem;
+}
+
+.post-content{
+    margin:20px 0;
+    line-height:1.8;
+}
+
+.post-card img{
+    width:100%;
+    max-height:400px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.post-card video{
+    width:100%;
+    max-height:400px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.post-footer{
+    display:flex;
+    gap:25px;
+    font-size:18px;
+}
+
+/* --- Create Post: collapsible header --- */
+.create-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: default;
+}
+
+.toggle-icon {
+  display: none;
+  font-size: 20px;
+  transition: transform .3s;
+}
+
+/* --- Responsive --- */
+@media(max-width:900px){
+
+.posts-layout{
+    grid-template-columns:1fr;
+}
+
+.create-post{
+    position:static;
+    order:-1;
+}
+
+  .create-post-header {
+    cursor: pointer;
+  }
+
+  .create-post-header h2 {
+    margin-bottom: 0;
+  }
+
+  .toggle-icon {
+    display: inline-block;
+  }
+
+  .toggle-icon.open {
+    transform: rotate(180deg);
+  }
+
+  .create-post-card form.create-post-form {
+    display: none;
+  }
+
+  .create-post-card form.create-post-form.open {
+    display: flex;
+    margin-top: 18px;
+  }
+
+}
