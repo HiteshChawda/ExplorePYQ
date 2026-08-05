@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        await axios.get(`${import.meta.env.VITE_API_URL}/users/current-user`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/current-user`, {
           withCredentials: true,
         });
 
