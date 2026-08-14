@@ -4,6 +4,8 @@ import { Link } from "react-router";
 import { login } from "../services/auth.api";
 import { useNavigate } from "react-router";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -15,8 +17,31 @@ const Login = () => {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!EMAIL_REGEX.test(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
 
     try {
       const response = await login(formData);
@@ -36,9 +61,9 @@ const Login = () => {
         <h2 style={{textAlign: "center"}}>Explore PYQ</h2>
         <h1>Login</h1>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="input-group">
-            <label htmlFor="email">UserName</label>
+            <label htmlFor="username">UserName</label>
             <input
               type="text"
               name="username"
@@ -61,6 +86,9 @@ const Login = () => {
               }
               placeholder="Enter Email"
             />
+            {errors.email && (
+              <small className="error-text">{errors.email}</small>
+            )}
           </div>
 
           <div className="input-group">
@@ -85,6 +113,9 @@ const Login = () => {
                 {showPassword ? "Y" : "N"}
               </button>
             </div>
+            {errors.password && (
+              <small className="error-text">{errors.password}</small>
+            )}
           </div>
 
           <p style={{ textAlign: "center" }}>
