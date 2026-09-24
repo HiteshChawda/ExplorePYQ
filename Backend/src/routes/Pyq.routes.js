@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT, verifyCreator } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.js";
-import {uploadPyq, getAllPyqs, deletePyq} from "../controllers/pyq.controllers.js";
+import {uploadPyq, getAllPyqs, deletePyq} from "../controllers/Pyq.controllers.js";
 
 const router = Router();
 
