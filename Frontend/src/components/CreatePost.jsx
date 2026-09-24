@@ -40,13 +40,10 @@ const CreatePost = ({ fetchPosts }) => {
     <div className="create-post-card">
       <div className="create-post-header" onClick={() => setIsOpen(!isOpen)}>
         <h2>Create Post (max 10mb)</h2>
-        <span className={`toggle-icon ${isOpen ? "open" : ""}`}>▾</span>
+        
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className={`create-post-form ${isOpen ? "open" : ""}`}
-      >
+      <form onSubmit={handleSubmit}>
         <textarea
           placeholder="What's on your mind?"
           value={content}

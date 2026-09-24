@@ -1,0 +1,164 @@
+.profile-page {
+  width: 100%;
+  padding: 40px 5% 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+/* ==========================
+   Profile header (top, full width)
+========================== */
+
+.profile-header {
+  width: 100%;
+  text-align: left;
+}
+.profile-header h2 {
+  font-size: 2rem;
+  margin: 0 0 16px;
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.profile-info p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ==========================
+   Posts + PYQs columns
+========================== */
+
+.profile-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.profile-column h3 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+
+.profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-empty {
+  width: 100%;
+  box-sizing: border-box;
+  background: #1f2937;
+  padding: 40px 20px;
+  margin: 0;
+  border-radius: 14px;
+  text-align: center;
+  opacity: 0.75;
+  font-size: 1rem;
+}
+
+.profile-item {
+  background: #1f2937;
+  padding: 22px 26px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.profile-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-item-header small {
+  opacity: 0.65;
+  font-size: 0.85rem;
+}
+
+.profile-item p {
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+
+.profile-item a {
+  color: #38bdf8;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+
+.profile-item a:hover {
+  text-decoration: underline;
+}
+
+.profile-item img,
+.profile-item video {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 14px;
+}
+
+.profile-delete-btn {
+  background: none;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.profile-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 30px 20px 50px;
+    gap: 28px;
+  }
+
+  .profile-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .profile-columns {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .profile-item {
+    padding: 18px 20px;
+  }
+
+  .profile-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .profile-delete-btn {
+    align-self: flex-end;
+  }
+}

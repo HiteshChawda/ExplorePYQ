@@ -1,6 +1,5 @@
 import { likePost, dislikePost } from "../pages/services/post.api";
 
-
 const PostCard = ({ post, fetchPosts }) => {
   const handleLike = async () => {
     await likePost(post._id);
@@ -17,11 +16,15 @@ const PostCard = ({ post, fetchPosts }) => {
       <div className="post-header">
         <div>
           <h3>{post.owner.fullName}</h3>
-
-          <small>@{post.owner.username}</small>
-
-          <p>{new Date(post.createdAt).toLocaleString()}</p>
+          <p>{new Date(post.createdAt).toLocaleDateString()}</p>
         </div>
+
+        <span className="post-time">
+          {new Date(post.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
       </div>
 
       <div className="post-content">{post.content}</div>

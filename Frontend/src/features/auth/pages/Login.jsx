@@ -18,6 +18,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -38,6 +39,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
 
     if (!validate()) {
       return;
@@ -48,10 +50,16 @@ const Login = () => {
 
       alert(response.message);
 
-      // Redirect after successful login
       navigate("/home");
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
+      const message = error.response?.data?.message || "Login Failed";
+
+      // If the account is unverified, guide the user to the OTP screen directly
+      if (message.toLowerCase().includes("verify")) {
+        setFormError(message);
+      } else {
+        alert(message);
+      }
     }
   };
 
@@ -117,6 +125,20 @@ const Login = () => {
               <small className="error-text">{errors.password}</small>
             )}
           </div>
+
+          {formError && (
+            <div style={{ textAlign: "center" }}>
+              <small className="error-text">{formError}</small>
+              {" "}
+              <Link
+                to="/verify-otp"
+                state={{ email: formData.email }}
+                style={{ textDecoration: "underline" }}
+              >
+                Verify now
+              </Link>
+            </div>
+          )}
 
           <p style={{ textAlign: "center" }}>
             Don't have an account?{" "}

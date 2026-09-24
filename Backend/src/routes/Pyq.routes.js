@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, verifyCreator } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.js";
-import {uploadPyq, getAllPyqs, deletePyq} from "../controllers/Pyq.controllers.js";
+import {uploadPyq, getAllPyqs, deletePyq} from "../controllers/pyq.controllers.js";
 
 const router = Router();
 
@@ -9,6 +9,7 @@ router
     .route("/")
     .post(
         verifyJWT,
+        verifyCreator,
         upload.single("pdf"),
         uploadPyq
     )
@@ -18,6 +19,7 @@ router
     .route("/:id")
     .delete(
         verifyJWT,
+        verifyCreator,
         deletePyq
     );
 

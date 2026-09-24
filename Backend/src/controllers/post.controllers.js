@@ -119,4 +119,23 @@ const dislikePost = asyncHandler(async (req, res) => {
     );
 });
 
-export { createPost, getAllPosts ,likePost,dislikePost};
+const deletePost = asyncHandler(async (req, res) => {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+        throw new ApiError(404, "Post not found");
+    }
+
+    if (post.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(403, "You are not allowed to delete this post");
+    }
+
+    await Post.findByIdAndDelete(req.params.id);
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, "Post deleted successfully")
+    );
+});
+
+export { createPost, getAllPosts, likePost, dislikePost, deletePost };
+

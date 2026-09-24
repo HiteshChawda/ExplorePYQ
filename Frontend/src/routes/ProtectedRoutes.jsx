@@ -1,29 +1,10 @@
-import { useEffect, useState } from "react";
 import { Navigate } from "react-router";
-import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const { isLoggedIn, loading } = useAuth();
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/current-user`, {
-          withCredentials: true,
-        });
-
-        console.log("SUCCESS", response.data);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.log("FAILED", error.response?.data);
-        setIsLoggedIn(false);
-      }
-    };
-
-    checkUser();
-  }, []);
-
-  if (isLoggedIn === null) {
+  if (loading) {
     return <h2>Loading...</h2>;
   }
 

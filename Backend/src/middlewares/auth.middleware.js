@@ -15,11 +15,8 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
             process.env.ACCESS_TOKEN_SECRET
         );
 
-        console.log("Decoded Token:", decodedToken);
-
         const user = await User.findById(decodedToken?._id);
 
-        console.log("User Found:", user);
         if (!user) {
             throw new ApiError(401, "invalid access Token")
         }
@@ -31,4 +28,17 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
 
         throw new ApiError(401, error?.message || "invalid access token")
     }
-})  
+})
+
+export const verifyCreator = asyncHandler(async (req, res, next) => {
+    // Must run AFTER verifyJWT — relies on req.user being already set
+    if (!req.user) {
+        throw new ApiError(401, "unauthorized request");
+    }
+
+    if (req.user.role !== "creator") {
+        throw new ApiError(403, "Only creators can perform this action");
+    }
+
+    next();
+})

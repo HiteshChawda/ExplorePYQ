@@ -5,8 +5,8 @@ import { uploadOnCloudinary } from '../utils/uploadOnCloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { json } from 'express';
 import jwt from "jsonwebtoken";
-
-//if you stuck on sending response in postman for a long time then in terminal -> netstat -ano | findstr :8000 then you see somthing like  TCP    0.0.0.0:8000    0.0.0.0:0    LISTENING    13916 , then run this on terminal -> Stop-Process -Id 13916 -Force and then npm run dev
+import { generateOtp, getOtpExpiry } from '../utils/generateOtp.js';
+import { sendOtpEmail } from '../utils/sendEmail.js';
 
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
@@ -29,15 +29,17 @@ const generateAccessAndRefreshTokens = async(userId) => {
 }
 }
 
+const cookieOptions = () => ({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+});
+
+
+//register user
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { email, username, fullName, password } = req.body;
-    console.log("email:", email);
-    console.log("username:", username);
-    
-
-
-    //handeling the case when user try to register with empty fields
+    const { email, username, fullName, password, role } = req.body;
 
     if (
         [email, username, fullName, password].some((field) => field?.trim() === "")
@@ -45,32 +47,136 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required");
     }
 
-    //handeling the case when user try to register with existing email or username
-
     const existedUser = await User.findOne({
         $or: [{ email }, { username }]
     })
     if (existedUser) {
         throw new ApiError(409, "User already exists with this email or username");
     }
-    
-    const user = await User.create({
+
+    // Only allow "creator" or default to "viewer" — never trust arbitrary input blindly
+    const finalRole = role === "creator" ? "creator" : "viewer";
+    const isCreator = finalRole === "creator";
+
+    const userPayload = {
         fullName,
         email,
         password,
         username: username.toLowerCase(),
-    })
-    //in select function by default all fields are selected but if we want to exclude some fields then we can use - before the field name 
+        role: finalRole,
+        isVerified: !isCreator, // viewers: true, creators: false
+    };
 
-    const createduser = await User.findById(user._id).select("-password -refreshToken")
+    if (isCreator) {
+        const otp = generateOtp();
+        userPayload.otp = otp;
+        userPayload.otpExpiry = getOtpExpiry();
+    }
+
+    const user = await User.create(userPayload);
+
+    const createduser = await User.findById(user._id).select("-password -refreshToken -otp -otpExpiry")
 
     if (!createduser) {
         throw new ApiError(500, "Failed to register user");
     }
 
-    return res.status(201).json(new ApiResponse(201, createduser, "User registered successfully"));
+    if (isCreator) {
+        try {
+            await sendOtpEmail(email, user.otp);
+        } catch (error) {
+            console.log("OTP EMAIL ERROR:", error);
+            // Don't fail registration if email fails — user can use "resend OTP"
+        }
 
+        return res.status(201).json(
+            new ApiResponse(
+                201,
+                { user: createduser, requiresOtp: true },
+                "Registered successfully. Please verify the OTP sent to your email."
+            )
+        );
+    }
+
+    return res.status(201).json(
+        new ApiResponse(201, { user: createduser, requiresOtp: false }, "User registered successfully")
+    );
 });
+
+// verify otp
+
+const verifyOtp = asyncHandler(async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        throw new ApiError(400, "Email and OTP are required");
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if (user.isVerified) {
+        throw new ApiError(400, "Account is already verified");
+    }
+
+    if (!user.otp || !user.otpExpiry) {
+        throw new ApiError(400, "No OTP found. Please request a new one");
+    }
+
+    if (user.otpExpiry < new Date()) {
+        throw new ApiError(400, "OTP has expired. Please request a new one");
+    }
+
+    if (user.otp !== otp) {
+        throw new ApiError(400, "Invalid OTP");
+    }
+
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, "Email verified successfully. You can now log in.")
+    );
+});
+
+// resend otp
+
+const resendOtp = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        throw new ApiError(400, "Email is required");
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if (user.isVerified) {
+        throw new ApiError(400, "Account is already verified");
+    }
+
+    const otp = generateOtp();
+    user.otp = otp;
+    user.otpExpiry = getOtpExpiry();
+    await user.save({ validateBeforeSave: false });
+
+    await sendOtpEmail(email, otp);
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, "A new OTP has been sent to your email")
+    );
+});
+
+
+//login user
 
 const loginUser = asyncHandler(async (req, res)=>{
     const {email,password,username} = req.body
@@ -90,14 +196,15 @@ const loginUser = asyncHandler(async (req, res)=>{
         throw new ApiError(401, "invalid user password")
     }
 
+    if (!user.isVerified) {
+        throw new ApiError(403, "Please verify your email before logging in. Check your inbox for the OTP.")
+    }
+
     const {accessToken, refreshToken} =await generateAccessAndRefreshTokens(user._id)
 
-    const loggedInUser = await User.findById(user.id).select("-password -refreshToken")    
-    const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none", //true when in production 
-    }
+    const loggedInUser = await User.findById(user.id).select("-password -refreshToken -otp -otpExpiry")
+    const options = cookieOptions();
+
     return res.status(200).cookie("accessToken",accessToken, options).cookie("refreshToken",refreshToken, options).json(
         new ApiResponse(200,
             {
@@ -107,6 +214,9 @@ const loginUser = asyncHandler(async (req, res)=>{
         )
     )
 })
+
+
+// logout user
 
 const logoutUser = asyncHandler(async(req , res)=>{
     await User.findByIdAndUpdate(
@@ -120,13 +230,13 @@ const logoutUser = asyncHandler(async(req , res)=>{
             new: true
         }
     )
-    const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none", //true when in production 
-    }
+    const options = cookieOptions();
+
     return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options).json(new ApiResponse(200,{},"User loged out!"))
 }) 
+
+
+
 
 const refreshAccessToken = asyncHandler(async(req,res)=>{
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
@@ -146,11 +256,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
         if (incomingRefreshToken !== user.refreshToken){
             throw new ApiError(401," refresh token expired")
         }
-        const options ={
-            httpOnly: true,
-            secure: true,
-            sameSite: "none" //true when in production
-        }
+        const options = cookieOptions();
         const {accessToken, newRefreshToken}= await generateAccessAndRefreshTokens(user._id)
         return res.status(200).cookie("accessToken",accessToken,options).cookie("newRefreshToken",newRefreshToken,options).json(
             new ApiResponse(
@@ -165,6 +271,8 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
     }
 })
 
+
+
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(
@@ -175,6 +283,4 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     );
 });
 
-
-
-export { registerUser ,loginUser ,logoutUser ,refreshAccessToken ,getCurrentUser};
+export { registerUser ,loginUser ,logoutUser ,refreshAccessToken ,getCurrentUser, verifyOtp, resendOtp };

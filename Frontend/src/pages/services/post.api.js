@@ -48,3 +48,12 @@ export async function dislikePost(postId) {
 
     return response.data;
 }
+
+export async function deletePost(postId) {
+
+    const response = await axios.delete(`${API}/${postId}`, {
+        withCredentials: true,
+    });
+
+    return response.data;
+}

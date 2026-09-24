@@ -1,90 +1,181 @@
-/* Main Page */
-
 .pyq-page {
     width: 100%;
     padding: 30px 5%;
+    position: relative;
 }
 
-/* Two Column Layout */
 
 .pyq-layout {
+    max-width: 1400px;
+    margin: auto;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 30px;
     align-items: flex-start;
 }
 
-/* ==========================
-   LEFT SIDE (PYQ Feed)
-========================== */
 
 .pyq-feed {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
-.pyq-card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    border-radius: 15px;
-    padding: 20px;
+.pyq-feed-title {
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+}
+
+.pyq-empty {
+    opacity: 0.8;
+}
+
+.branch-block {
+    margin-bottom: 0;
+}
+
+.branch-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 420px;
+    cursor: pointer;
+}
+
+.branch-pill {
+    flex: 1;
+    background: #1a2235;
     color: white;
-    box-shadow: 0 5px 18px rgba(0,0,0,.25);
-    transition: .3s;
+    border: none;
+    padding: 16px 26px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.pyq-card:hover {
-    transform: translateY(-5px);
-}
-
-.pyq-header {
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,.15);
-    padding-bottom: 10px;
-}
-
-.pyq-header h3 {
-    margin: 0;
-    color: #ffffff;
-}
-
-.pyq-header small {
-    color: #d4d4d4;
-}
-
-.pyq-card p {
-    margin: 8px 0;
-    line-height: 1.6;
-}
-
-.pyq-card a {
-    display: inline-block;
-    margin-top: 15px;
-    text-decoration: none;
-    color: white;
-    background: #394867;
-    padding: 10px 18px;
-    border-radius: 8px;
-    transition: .3s;
-}
-
-.pyq-card a:hover {
+.branch-pill:hover {
     background: #26344f;
 }
 
-/* ==========================
-   RIGHT SIDE (Upload Card)
-========================== */
+.chevron-circle {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 50%;
+    background: #1a2235;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.chevron-circle:hover {
+    background: #26344f;
+}
+
+.chevron {
+    display: inline-block;
+    color: white;
+    font-size: 0.85rem;
+    transition: transform 0.3s;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+
+.subject-list {
+    background: #1a2235;
+    border-radius: 18px;
+    margin-top: 10px;
+    padding: 8px 22px;
+    max-width: 420px;
+}
+
+.subject-block {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.subject-block:last-child {
+    border-bottom: none;
+}
+
+.subject-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    cursor: pointer;
+}
+
+.subject-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 1.05rem;
+}
+
+.subject-name .bullet {
+    font-size: 1.2rem;
+    line-height: 0;
+}
+
+.subject-chevron {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+
+.pyq-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0 16px 26px;
+}
+
+.pyq-file-item {
+    color: #d4d4d4;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.pyq-file-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+
+.upload-section {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
 
 .upload-card {
-    background: rgba(255,255,255,.08);
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(12px);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 5px 18px rgba(0,0,0,.25);
-    position: sticky;
-    top: 90px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
 }
 
 .upload-card h2 {
@@ -121,58 +212,212 @@
     color: white;
     font-size: 17px;
     cursor: pointer;
-    transition: .3s;
+    transition: 0.3s;
 }
 
 .upload-card button:hover {
     background: #26344f;
 }
 
-/* ==========================
-   Responsive
-========================== */
+/* mobile */
 
-@media (max-width:992px){
+.pyq-fab {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
 
-    .pyq-layout{
-        grid-template-columns:1fr;
+    width: 56px;
+    height: 56px;
+
+    border-radius: 50%;
+
+    background: #1a2235;
+    color: white;
+
+    border: none;
+
+    font-size: 28px;
+    line-height: 1;
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+
+    cursor: pointer;
+
+    z-index: 50;
+
+    transition: 0.3s;
+}
+
+.pyq-fab:hover {
+    background: #26344f;
+}
+
+
+
+.pyq-modal-backdrop {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(10, 12, 20, 0.55);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 1000;
+
+    animation: fadeIn 0.2s ease;
+}
+
+
+
+.pyq-modal-card {
+    position: relative;
+
+    width: 100%;
+    max-width: 480px;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    background: transparent;
+
+    z-index: 1001;
+
+    animation: slideUp 0.25s ease;
+}
+
+
+
+.pyq-modal-card .upload-card {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+
+
+
+.pyq-modal-close {
+    position: absolute;
+
+    top: -14px;
+    right: -14px;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    background: #1a2235;
+    color: white;
+
+    border: none;
+
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+
+    z-index: 1002;
+}
+
+.pyq-modal-close:hover {
+    background: #26344f;
+}
+
+/* animation */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
     }
 
-    .upload-card{
-        position:static;
-        order:-1;
+    to {
+        opacity: 1;
     }
 }
 
-@media (max-width:768px){
-
-    .pyq-page{
-        padding:20px;
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
     }
 
-    .upload-card,
-    .pyq-card{
-        padding:18px;
-    }
-
-    .pyq-header h3{
-        font-size:1.3rem;
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
-@media (max-width:480px){
 
-    .pyq-page{
-        padding:15px;
+
+/* responsivd */
+
+@media (max-width: 900px) {
+
+    .pyq-layout {
+        grid-template-columns: 1fr;
     }
 
-    .upload-card,
-    .pyq-card{
-        padding:15px;
+    .branch-row,
+    .subject-list {
+        max-width: 100%;
+    }
+
+    /* Hide desktop upload sidebar */
+    .upload-section {
+        display: none;
+    }
+
+    /* Show floating button */
+    .pyq-fab {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+
+    .pyq-page {
+        padding: 20px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .pyq-page {
+        padding: 15px;
+    }
+
+    .upload-card {
+        padding: 18px;
     }
 
     .upload-card input,
-    .upload-card button{
-        font-size:15px;
+    .upload-card button {
+        font-size: 15px;
+    }
+
+    .branch-pill {
+        font-size: 1rem;
+        padding: 14px 20px;
+    }
+
+    .pyq-modal-card {
+        max-height: 90vh;
     }
 }
+

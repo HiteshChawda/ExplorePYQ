@@ -15,6 +15,7 @@ const Register = () => {
     fullName: "",
     email: "",
     password: "",
+    role: "viewer",
   });
   const [errors, setErrors] = useState({});
 
@@ -55,12 +56,16 @@ const Register = () => {
 
     try {
       const response = await registerUser(formData);
-      console.log(response);
-      alert("Registration Successful!");
-      navigate("/");
+
+      if (response.data?.requiresOtp) {
+        navigate("/verify-otp", { state: { email: formData.email } });
+      } else {
+        alert("Registration Successful!");
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
-      alert("Registration Failed!");
+      alert(error.response?.data?.message || "Registration Failed!");
     }
   };
 
@@ -145,10 +150,40 @@ const Register = () => {
             )}
           </div>
 
+          <div className="input-group">
+            <label>Register as</label>
+            <div style={{ display: "flex", gap: "20px", marginTop: "6px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="viewer"
+                  checked={formData.role === "viewer"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
+                />
+                Viewer
+              </label>
+
+              <label style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="creator"
+                  checked={formData.role === "creator"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
+                />
+                Creator
+              </label>
+            </div>
+          </div>
+
           <p style={{ textAlign: "center" }}>
             Already have an account?
-            <Link to="/Login" style={{ textDecoration: "none" }}>
-              {" "}
+            <Link to="/" style={{ textDecoration: "none" }}>
               Login here
             </Link>
           </p>

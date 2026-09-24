@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const API = import.meta.env.VITE_API_URL;
-export async function register({ username, fullName, email, password }) {
+export async function register({ username, fullName, email, password, role }) {
   try {
     const response = await axios.post(
       `${API}/users/register`,
-      { username, fullName, email, password },
+      { username, fullName, email, password, role },
       {
         withCredentials: true,
       },
@@ -56,12 +56,44 @@ export async function logout() {
 }
 
 export async function getCurrentUser() {
-  const response = await axios.get(
-    `${API}/users/current-user`,
-    {
-      withCredentials: true,
-    }
-  );
+  try {
+    const response = await axios.get(
+      `${API}/users/current-user`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    return null;
+  }
+}
 
-  return response.data;
+export async function verifyOtp({ email, otp }) {
+  try {
+    const response = await axios.post(
+      `${API}/users/verify-otp`,
+      { email, otp },
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    throw error;
+  }
+}
+
+export async function resendOtp({ email }) {
+  try {
+    const response = await axios.post(
+      `${API}/users/resend-otp`,
+      { email },
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    throw error;
+  }
 }
